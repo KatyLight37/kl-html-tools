@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body {
+      background-color: black;
+    }
+
+    .KatyLightCalendar {
+      padding: 10px;
+      width: fit-content;
+      height: fit-content;
+      border: 1px solid white;
+      color: white;
+      user-select: none;
+    }
+
+    .KatyLightCalendar > .header {
+      padding-top: 5px;
+      font-size: 24px;
+
+    }
+
+    .KatyLightCalendar > .header > .item {
+      margin-right: 5px;
+      height: 40px;
+      line-height: 40px;
+      float: left;
+      width: 100px;
+      border: 1px solid white;
+      vertical-align: middle;
+      text-align: center;
+
+    }
+
+    .KatyLightCalendar > .header > .item:last-child {
+      margin-right: 0;
+    }
+
+    .KatyLightCalendar > .title {
+      padding: 5px;
+      border: 1px solid white;
+      text-align: center;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .KatyLightCalendar > .content {
+      padding-top: 5px;
+      text-align: center;
+    }
+
+    .KatyLightCalendar > .content > .item {
+      float: left;
+      width: 100px;
+      border: 1px solid white;
+      height: 100px;
+      line-height: 100px;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 20px;
+      margin: 0 5px 5px 0;
+      background-color: transparent;
+      /*transition: .3s ease-in all;*/
+
+    }
+
+    .KatyLightCalendar > .content > .item.active {
+      background-color: rgba(255, 255, 255, 0.34);
+    }
+
+    .KatyLightCalendar > .content > .item.disabled {
+      opacity: .4;
+    }
+
+    .KatyLightCalendar > .content > .item:hover, .KatyLightCalendar > .header > .item:hover {
+      background-color: rgba(255, 255, 255, 0.33);
+      box-shadow: 0 0 6px 3px white, inset 0 0 6px 3px white;
+      text-shadow: 0 0 3px white;
+    }
+
+    .KatyLightCalendar > .content > .item:nth-child(7n+1) {
+      clear: both;
+    }
+
+    .KatyLightCalendar > .content > .item:nth-child(7n) {
+      margin-right: 0;
+    }
+
+    .KatyLightCalendar > .content > .item:nth-of-type(35) ~ .item {
+      margin-bottom: 0;
+    }
+
+    .KatyLightCalendar > .content::after, .KatyLightCalendar > .header::after {
+      display: block;
+      content: "";
+      clear: both;
+    }
+  </style>
+  <script>
+    class KatyLightCalendar {
+      constructor(param) {
+        if (param.date) {
+          this.date = param.date
+          this.year = this.date.getFullYear()
+          this.mouth = this.date.getMonth() + 1
+          this.day = this.date.getDate()
+        } else {
+          this.year = param.year || 2016
+          this.mouth = param.mouth || 7
+          this.day = param.day || 1
+          this.date = new Date(this.year, this.mouth - 1, this.day)
+        }
+        this.target = document.getElementById(param.id)
+        this.target.classList.add('KatyLightCalendar')
+        this.title = document.createElement('div')
+        this.title.classList.add('title')
+        this.title.innerText = this.year + '-' + this.mouth
+        this.target.append(this.title)
+        this.header = document.createElement('div')
+        this.header.classList.add('header')
+        this.themeType=param.themeType||'ch';
+        this.theme = {
+          "planet": [
+            '☉',
+            '☽',
+            '♂',
+            '☿',
+            '♃',
+            '♀',
+            '♄'
+          ],
+          "ch": [
+            '日',
+            '一',
+            '二',
+            '三',
+            '四',
+            '五',
+            '六'
+          ],
+          "en": [
+            'SUN',
+            'MON',
+            'TUE',
+            'WED',
+            'THR',
+            'FIR',
+            'SUT'
+          ]
+        }
+        for (let i = 0; i < 7; i++) {
+          let div = document.createElement('div')
+          div.classList.add('item')
+          div.innerText = this.theme[ this.themeType][i]
+          this.header.append(div)
+        }
+        this.target.append(this.header)
+        this.content = document.createElement('div')
+        this.content.classList.add('content')
+        this.target.append(this.content)
+
+        this.totalDay = this.getTotalDay(this.year, this.mouth)
+        let beforeTotalDay
+        if (this.mouth - 1 > 0) {
+          beforeTotalDay = this.getTotalDay(this.year, this.mouth - 1)
+        } else {
+          beforeTotalDay = this.getTotalDay(this.year - 1, 12)
+        }
+        let z = new Date(this.date.toLocaleDateString())
+        z.setDate(1)
+        let t = z.getDay()
+        for (let i = 0; i < 42; i++) {
+          let div = document.createElement('div')
+          div.classList.add('item')
+          if (i < t) {
+            div.classList.add('disabled')
+            div.innerText = (beforeTotalDay + i - t + 1).toString()
+          } else if (i - t < this.totalDay) {
+            div.innerText = (i - t + 1).toString()
+            if ((i - t + 1) === this.day) {
+              div.classList.add('active')
+            }
+          } else {
+            div.classList.add('disabled')
+            div.innerText = (i - this.totalDay - t + 1).toString()
+          }
+          this.content.append(div)
+        }
+      }
+
+      goto(param) {
+        if (param.date) {
+          this.date = param.date
+          this.year = this.date.getFullYear()
+          this.mouth = this.date.getMonth() + 1
+          this.day = this.date.getDate()
+        } else {
+          this.year = param.year || 2016
+          this.mouth = param.mouth || 7
+          this.day = param.day || 1
+          this.date = new Date(this.year, this.mouth - 1, this.day)
+        }
+        this.totalDay = this.getTotalDay(this.year, this.mouth)
+        let z = new Date(this.date.toLocaleDateString())
+        z.setDate(1)
+        let t = z.getDay()
+        let beforeTotalDay
+        if (this.mouth - 1 > 0) {
+          beforeTotalDay = this.getTotalDay(this.year, this.mouth - 1)
+        } else {
+          beforeTotalDay = this.getTotalDay(this.year - 1, 12)
+        }
+        let list = this.content.querySelectorAll('.item')
+        for (let i = 0; i < 42; i++) {
+          if (i < t) {
+            list[i].classList.add('disabled')
+            list[i].classList.remove('active')
+            list[i].innerText = (beforeTotalDay + i - t + 1).toString()
+          } else if (i - t < this.totalDay) {
+            list[i].innerText = (i - t + 1).toString()
+            list[i].classList.remove('disabled')
+            if ((i - t + 1) === this.day) {
+              list[i].classList.add('active')
+            } else {
+              list[i].classList.remove('active')
+            }
+          } else {
+            list[i].classList.add('disabled')
+            list[i].classList.remove('active')
+            list[i].innerText = (i - this.totalDay - t + 1).toString()
+          }
+        }
+        this.title.innerText = this.year + '-' + this.mouth
+
+      }
+
+      getTotalDay(year, mouth) {
+        if (mouth < 8) {
+          if (mouth % 2 === 1) {
+            return 31
+          } else if (mouth !== 2) {
+            return 30
+          } else {
+            if ((year % 400 === 0) || (year % 100 !== 0 && year % 4 === 0)) {
+              return 29
+            } else {
+              return 28
+            }
+          }
+        } else {
+          if (mouth % 2 === 0) {
+            return 31
+          } else {
+            return 30
+          }
+        }
+      }
+    }
+
+    window.onload = () => {
+      let k = new KatyLightCalendar({ id: 'c', date: new Date(2000, 1, 28), themeType:'planet'})
+      setTimeout(() => {
+        k.goto({
+          year: 2016,
+          mouth: 7,
+          day: 25,
+
+        })
+      }, 1000)
+    }
+
+
+  </script>
+</head>
+<body>
+<div class="KatyLightCalendar" id="c">
+
+</div>
+
+</body>
+</html>

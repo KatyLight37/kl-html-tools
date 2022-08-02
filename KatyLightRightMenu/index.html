@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .menu {
+      border: 1px solid white;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      position: fixed;
+      width: 150px;
+      display: none;
+    }
+    .menu > .item:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+
+    }
+
+    .menu > .item {
+      user-select: none;
+      line-height: 30px;
+      vertical-align: middle;
+      padding-inline-start: 20px;
+    }
+    .menu.active {
+      display: block;
+    }
+
+    .menu > .item.disabled {
+      pointer-events: none;
+      opacity: .5;
+    }
+
+
+
+  </style>
+  <script>
+    function doNothing(e) {
+      window.event.returnValue = false
+      menu.show(e)
+      return false
+    }
+
+    var menu
+
+    class Menu {
+      constructor(param) {
+        this.target = document.createElement('div')
+
+        this.target.classList.add('menu')
+        this.data = param.data
+        this.active = false
+        this.clickZ = this.click.bind(this)
+        this.closeZ = this.close2.bind(this)
+        document.addEventListener('click', this.closeZ)
+        for (let i = 0; i < this.data.length; i++) {
+          let div = document.createElement('div')
+          div.classList.add('item')
+          if (this.data[i].disabled) {
+            div.classList.add('disabled')
+
+          }
+          div.dataset.index = i.toString()
+          div.innerText = this.data[i].label
+          div.addEventListener('click', this.clickZ)
+          this.target.append(div)
+        }
+        document.body.append(this.target)
+      }
+
+      click(e) {
+        let index = parseInt(e.target.dataset.index)
+        if (this.data[index].active) {
+          this.data[index].active(e, this.acEvent)
+        }
+        this.close()
+      }
+
+      show(e) {
+        this.active = true
+        this.nodeList = this.target.querySelectorAll('.item')
+        for (let i = 0; i < this.data.length; i++) {
+          if (this.data[i].beforeDisabled) {
+            let t = this.data[i].beforeDisabled(e)
+            this.data[i].disabled = t
+            if (t) {
+              this.nodeList[i].classList.add('disabled')
+            } else {
+              this.nodeList[i].classList.remove('disabled')
+            }
+          }
+        }
+        this.acEvent = e
+        this.target.style.left = e.x + 'px'
+        this.target.style.top = e.y + 'px'
+        this.target.classList.add('active')
+      }
+
+      close() {
+        this.active = false
+        this.target.classList.remove('active')
+      }
+
+      close2(e) {
+        if (!this.target.contains(e.target) && this.active) {
+          this.active = false
+          this.target.classList.remove('active')
+        }
+      }
+    }
+
+    window.onload = () => {
+      menu = new Menu({
+        data: [
+          {
+            label: '主页',
+            active: (e) => {
+              console.log('跳转到主页')
+            }
+          },
+          {
+            label: '删除',
+            active: (e, a) => {
+              if (a.target.nodeName === 'LI') {
+                a.target.remove()
+              }
+            },
+            beforeDisabled: (e) => {
+              return e.target.nodeName !== 'LI'
+            }
+          },
+          {
+            label: '询问',
+            active: (e, a) => {
+              console.dir(a)
+            }
+          },
+          {
+            label: '啧啧',
+            disabled: true
+
+          }
+        ]
+      })
+    }
+  </script>
+</head>
+<body>
+<div style="height: 300px;background-color: lightblue" oncontextmenu="doNothing(event)">
+  <ul style="width: 200px;">
+    <li>梨子</li>
+    <li>苹果</li>
+    <li>葡萄</li>
+    <li>茄子</li>
+    <li>梨子</li>
+    <li>苹果</li>
+    <li>葡萄</li>
+    <li>茄子</li>
+    <li>梨子</li>
+    <li>苹果</li>
+    <li>葡萄</li>
+    <li>茄子</li>
+    <li>梨子</li>
+    <li>苹果</li>
+    <li>葡萄</li>
+    <li>茄子</li>
+    <li>梨子</li>
+    <li>苹果</li>
+    <li>葡萄</li>
+    <li>茄子</li>
+  </ul>
+</div>
+</body>
+</html>

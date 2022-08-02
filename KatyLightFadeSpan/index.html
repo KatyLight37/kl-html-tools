@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body {
+      background-color: black;
+      padding: 0;
+      margin: 0;
+      color: white;
+    }
+
+    .kl-fade-span {
+      position: fixed;
+      animation: ease-in 1.3s spanMove forwards;
+      animation-iteration-count: 1;
+      user-select: none;
+      font-size: 24px;
+    }
+
+    .kl-fade-span.info {
+      color: cyan;
+    }
+
+    .kl-fade-span.warn {
+      color: yellow;
+    }
+
+    .kl-fade-span.error {
+      color: red;
+    }
+
+    .kl-fade-span.success {
+      color: #00ff00;
+    }
+
+    .kl-fade-span.primary {
+      color: #5200ff;
+    }
+
+    @keyframes spanMove {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+
+      }
+      100% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+
+    }
+  </style>
+  <script>
+    class KatyLightFadeSpan {
+      constructor() {
+      }
+
+      info(param) {
+        this.base('INFO', param)
+      }
+
+      warn(param) {
+        this.base('WARN', param)
+      }
+
+      success(param) {
+        this.base('SUCCESS', param)
+      }
+
+      error(param) {
+        this.base('ERROR', param)
+      }
+
+      primary(param) {
+        this.base('PRIMARY', param)
+      }
+
+      base(type, param) {
+        let span = document.createElement('span')
+        span.classList.add('kl-fade-span')
+        let left
+        let top
+        if (
+          Object.prototype.toString.call(param) === '[object Object]'
+        ) {
+          left = param.x || 200
+          top = param.y || 100
+          span.innerText = param.text||'漂浮文字'
+        } else {
+          span.innerText = param
+          left = 200
+          top = 100
+        }
+
+        span.style.left = left + 'px'
+        span.style.top = top + 'px'
+        switch (type) {
+          case 'WARN':
+            span.classList.add('warn')
+            break
+          case 'INFO':
+            span.classList.add('info')
+
+            break
+          case 'SUCCESS':
+            span.classList.add('success')
+
+            break
+          case 'ERROR':
+            span.classList.add('error')
+
+            break
+          case 'PRIMARY':
+            span.classList.add('primary')
+
+            break
+        }
+        document.body.append(span)
+        setTimeout(()=>{
+          span.remove();
+        },1500)
+      }
+    }
+
+    window.onload = () => {
+      let kl=new KatyLightFadeSpan();
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          kl.info({
+            x:i*160+200,
+            y:j*100+130,
+            text:'+125132'
+
+          })
+
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+
+</body>
+</html>

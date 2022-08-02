@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .KatyLightMsgSingle {
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+    }
+
+    .KatyLightMsgSingle > .info {
+      background-color: #132f2f;
+      height: 40px;
+      overflow: hidden;
+      text-align: center;
+      color: white;
+      line-height: 40px;
+      vertical-align: middle;
+      position: absolute;
+      font-weight: bolder;
+      font-size: 25px;
+      width: 0;
+      left: 0;
+      top: 0;
+    }
+
+    .KatyLightMsgSingle > .info > .content {
+      width: 100vw;
+    }
+
+    .KatyLightMsgSingle > .info.hidden {
+      opacity: 0;
+      transition: opacity ease-in .5s;
+    }
+
+    .KatyLightMsgSingle > .info.active::after {
+      content: '';
+      display: block;
+      position: absolute;
+      right: 0;
+      height: 40px;
+      width: 60px;
+      background: linear-gradient(to right ,transparent,cyan);
+      top: 0;
+    }
+    body {
+      background-color: black;
+      padding: 0;
+      margin: 0;
+    }
+
+  </style>
+  <script>
+
+
+    class KatyLightMsgSingle {
+      constructor() {
+        this.target = document.createElement('div')
+        this.target.classList.add('KatyLightMsgSingle')
+        document.body.append(this.target)
+        this.list = []
+      }
+
+      show(txt) {
+        this.list.push(txt)
+        if (this.timer) {
+
+        } else {
+          this.onlyShow()
+        }
+      }
+
+      onlyShow() {
+
+        this.vw = 0
+        this.info = document.createElement('div')
+        this.info.classList.add('info')
+        this.info.classList.add('active')
+        let content = document.createElement('div')
+        content.classList.add('content')
+        this.info.append(content)
+        content.innerText = this.list[0]
+        this.target.append(this.info)
+        this.timer = setInterval(() => {
+          this.vw++
+          this.info.style.width = this.vw + 'vw'
+          if (this.vw === 100) {
+            this.list.splice(0, 1)
+            this.info.classList.remove('active')
+            let past = this.info
+            clearInterval(this.timer)
+            this.timer = setTimeout(() => {
+              clearTimeout(this.timer)
+              this.timer = null
+
+              setTimeout(() => {
+                past.classList.add('hidden')
+                setTimeout(() => {
+                  past.remove()
+                }, 1000)
+
+              }, 1000)
+              if (this.list.length > 0) {
+                this.onlyShow()
+              }
+            }, 2000)
+
+          }
+        }, 10)
+
+      }
+    }
+
+    window.onload = () => {
+      let infoBox = new KatyLightMsgSingle()
+      infoBox.show('获得游戏成就：过关')
+      infoBox.show('获得游戏成就：绿油油')
+      var index = 0
+      let t = setInterval(() => {
+        index++
+        infoBox.show('获得成就：叠加护甲' + index + '次！')
+      }, 100)
+
+    }
+  </script>
+</head>
+<body>
+
+
+</body>
+</html>

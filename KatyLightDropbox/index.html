@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+    <script src="./KatyLightDropbox.js"></script>
+  <link type="text/css" href="./KatyLightDropbox.css" rel="stylesheet"/>
+  <style>
+    .kl-dropbox {
+      width: 230px;
+    }
+  </style>
+  <script>
+
+    var data = [
+      {
+        name: '恶魔之书'
+      },
+      {
+        name: '大恢复药水'
+      },
+      {
+        name: '天球仪'
+      },
+      {
+        name: '万能星座拼图'
+      },
+      {
+        name: '黄道星座拼图'
+      },
+      {
+        name: '万能拼图'
+      },
+      {
+        name: '塔罗牌拼图'
+      },
+      {
+        name: '天秤座拼图'
+      },
+      {
+        name: '天秤座'
+      },
+      {
+        name: '猎户座'
+      },
+      {
+        name: '蓝莓宝石'
+      }
+    ]
+    var box
+    window.onload = () => {
+      box = new KatyLightDragBox({ target: 'box', data: data })
+
+    }
+  </script>
+</head>
+<body>
+<div id="box"></div>
+<div style="height: 1200px">
+
+</div>
+</body>
+</html>

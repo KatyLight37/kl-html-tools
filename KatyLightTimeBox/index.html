@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body{
+      background-color: black;
+      color: white;
+    }
+
+    .KatyLightTimeBox{
+      color: #00ff95;
+      font-size: 2rem;
+      font-weight: bolder;
+    }
+    .KatyLightTimeBox>.time{
+      margin-left: 1rem;
+    }
+  </style>
+  <script>
+    class KatyLightTimeBox{
+      constructor(params) {
+        this.target=params.target;
+        let date=new Date();
+        let year=date.getFullYear();
+        let mouth=date.getMonth()+1;
+        let d=date.getDate();
+        let h=date.getHours();
+        let m=date.getMinutes();
+        let s=date.getSeconds();
+        this.timeSpan=this.target.querySelector('.time')
+
+        this.dateSpan=this.target.querySelector('.date')
+
+        this.data=[
+          year,mouth,d,h,m,s
+        ]
+        this.dateSpan.innerText=this.dateFormat();
+         this.run()
+       }
+      run(){
+        setInterval(()=>{
+          let cc=false;
+          this.data[5]++;
+          if(this.data[5]>=60){
+            this.data[5]=0;
+            this.data[4]++
+          }
+          if(this.data[4]>=60){
+            this.data[4]=0;
+            this.data[3]++
+          }
+          if(this.data[3]>=24){
+            this.data[3]=0;
+            this.data[2]++
+            cc=true;
+          }
+          this.timeSpan.innerText=this.timeFormat();
+          if(!cc){
+            return;
+          }
+          let max=30;
+          if(this.data[1]<8){
+            if(this.data[1]%2===0){
+              if(this.data[1]===2){
+                if(this.data[0]%400===0||(this.data[0]%4===0&&this.data[0]%100!==0)){
+                  max=29
+                }else{
+                  max=28
+                }
+              }else{
+                max=30
+              }
+            }else{
+              max=31
+            }
+          }else{
+            if(this.data[1]%2===0){
+              max=31
+            }else{
+              max=30
+            }
+          }
+          if(this.data[2]>max){
+            this.data[2]=0;
+            this.data[1]++;
+          }
+          if(this.data[1]>12){
+            this.data[1]=1;
+            this.data[0]++;
+          }
+          this.dateSpan.innerText=this.dateFormat();
+        },1000)
+      }
+      dateFormat(){
+        let s=this.data[0].toString();
+
+        let m=this.data[1].toString();
+        if(m.length<2){
+          m="0"+m;
+        }
+        let h=this.data[2].toString();
+        if(h.length<2){
+          h="0"+h;
+        }
+        return h+"."+m+"."+s
+      }
+      timeFormat(){
+        let s=this.data[5].toString();
+        if(s.length<2){
+          s="0"+s;
+        }
+        let m=this.data[4].toString();
+        if(m.length<2){
+          m="0"+m;
+        }
+        let h=this.data[3].toString();
+        if(h.length<2){
+          h="0"+h;
+        }
+        return h+":"+m+":"+s
+      }
+    }
+window.onload=()=>{
+  new KatyLightTimeBox({
+    target:document.querySelector('.KatyLightTimeBox')
+  })
+}
+  </script>
+</head>
+<body>
+<div class="KatyLightTimeBox"><span class="date">2012.12.21</span><span class="time">12:00:00</span></div>
+</body>
+</html>

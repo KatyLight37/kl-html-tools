@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body{
+      background-color: dodgerblue;
+    }
+    .btn::before{
+      content: '';
+      display: block;
+      position: absolute;
+      height: 50px;
+      width: 200%;
+      left: 60px;
+      top: 0;
+      transform: rotate(45deg);
+      pointer-events: none;
+      background-color: #ffffff99;
+     }
+    .btn:hover{
+
+    }
+    .btn:hover::before{
+      left: calc(-100% - 60px);
+      transition: all .4s ease-in;
+    }
+    .btn{
+       position: relative;
+      overflow: hidden;
+      display: inline-block;
+      padding: 10px 20px;
+      color: white;
+      user-select: none;
+      background-color: deeppink;
+    }
+  </style>
+</head>
+<body>
+<div class="btn">fdsfd</div>
+<div class="btn">开始菜单</div>
+<div class="btn">开始菜单开始菜单开始菜单开始菜单</div>
+</body>
+</html>

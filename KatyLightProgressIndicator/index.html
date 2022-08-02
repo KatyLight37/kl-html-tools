@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body{
+      background-color: black;
+    }
+    .KatyLight-Progress-Indicator{
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 5px;
+    }
+    .KatyLight-Progress-Indicator>.inner{
+      height: 2px;
+      width: 0;
+      background-color: cyan;
+      box-shadow: 0 0  10px 5px #00FFFF99;
+
+    }
+  </style>
+  <script>
+     class ProgressIndicator{
+       constructor(props) {
+         this.target=document.createElement('div')
+         this.target.classList.add("KatyLight-Progress-Indicator")
+         this.inner=document.createElement('div')
+         this.inner.classList.add('inner')
+         this.target.append(this.inner)
+         document.body.append(this.target);
+         this.maxHeight=document.body.scrollHeight;
+         this.viewHeight=window.screen.height;
+         this.maxMove=this.maxHeight-this.viewHeight;
+         this.move=0;
+         this.setLine();
+         this.scrollZ=this.scroll.bind(this)
+         document.addEventListener('scroll', this.scrollZ)
+       }
+       scroll(e){
+          this.setLine();
+       }
+       setLine(){
+         this.move=document.documentElement .scrollTop;
+         if(this.maxMove<1){
+           this.inner.style.width=100+"%"
+         }else{
+           this.inner.style.width=(this.move/this.maxMove*100).toFixed(2)+"%"
+         }
+       }
+       update(){
+         this.maxHeight=document.body.scrollHeight;
+         this.viewHeight=window.screen.height;
+         this.maxMove=this.maxHeight-this.viewHeight;
+         this.move=document.documentElement .scrollTop;
+         if(this.maxMove<1){
+           this.inner.style.width=100+"%"
+         }else{
+           this.inner.style.width=(this.move/this.maxMove*100).toFixed(2)+"%"
+         }
+       }
+     }
+     window.onload=()=>{
+       let k=new ProgressIndicator();
+     }
+  </script>
+</head>
+<body>
+<div style="height: 3000px"></div>
+</body>
+</html>

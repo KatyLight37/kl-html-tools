@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      padding: 0;
+      margin: 0;
+    }
+
+    .KatyLightPagination {
+
+    }
+
+    .KatyLightPagination > .box {
+      display: flex;
+    }
+
+    .KatyLightPagination > .box > .jump {
+
+    }
+
+    .KatyLightPagination > .box > .jump > button {
+      list-style: none;
+      display: block;
+      float: left;
+      box-sizing: border-box;
+
+      border: 1px solid white;
+      user-select: none;
+      height: 30px;
+      line-height: 28px;
+      vertical-align: middle;
+      background-color: rgba(255, 255, 255, 0.19);
+      color: white;
+    }
+
+    .KatyLightPagination > .box > .jump > input {
+      height: 30px;
+      line-height: 28px;
+      padding: 0;
+      outline: none;
+      text-align: center;
+      background-color: transparent;
+      color: white;
+      display: block;
+      margin-left: 3px;
+      float: left;
+      box-sizing: border-box;
+      border: 1px solid white;
+      vertical-align: middle;
+    }
+
+    .KatyLightPagination > .box > ul {
+      list-style: none;
+      padding-inline-start: 0;
+      margin: 0;
+      display: block;
+    }
+
+    .KatyLightPagination > .box > ul::after, .KatyLightPagination > .jump::after {
+      display: block;
+      content: '';
+      clear: both;
+    }
+
+    .KatyLightPagination > .box > ul > li, .KatyLightPagination > .box > .pre, .KatyLightPagination > .box > .next {
+      list-style: none;
+      margin-left: 3px;
+      box-sizing: border-box;
+
+      float: left;
+      height: 30px;
+      min-width: 30px;
+      line-height: 28px;
+      border: 1px solid white;
+      text-align: center;
+      user-select: none;
+      vertical-align: middle;
+      color: white;
+
+    }
+
+    .KatyLightPagination > .box > ul > li.hide {
+      visibility: hidden;
+    }
+
+    .KatyLightPagination > .box > ul > li.more {
+      border: none;
+    }
+
+    .KatyLightPagination > .box > ul > li.more:hover {
+      box-shadow: none;
+    }
+
+    .KatyLightPagination > .box > ul > li.active {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .KatyLightPagination > .box > ul > li:hover, .KatyLightPagination > .box > .pre:hover, .KatyLightPagination > .box > .next:hover,    .KatyLightPagination > .box > .jump > button:hover {
+      box-shadow: 0 0 6px 3px white, inset 0 0 6px 3px white;
+      text-shadow: 0 0 3px white;
+    }
+    .KatyLightPagination > .box > .pre.disabled,    .KatyLightPagination > .box > .next.disabled
+    {
+      opacity: .5;
+      pointer-events: none;
+    }
+    .KatyLightPagination > .box > .pre::before {
+      content: "⮜"
+    }
+
+    .KatyLightPagination > .box > .next::before {
+      content: '⮞'
+    }
+    .KatyLightPagination > .box > .more.pre,.KatyLightPagination > .box > .more.next{
+      width: 50px;
+    }
+    .KatyLightPagination > .box > .more.pre::before {
+      content: "⮜⮜"
+    }
+
+    .KatyLightPagination > .box > .more.next::before {
+      content: '⮞⮞'
+    }
+
+    .KatyLightPagination > .info {
+      color: white;
+      opacity: .5;
+      user-select: none;
+    }
+  </style>
+  <script>
+    class KatyLightPagination {
+      constructor(param) {
+        this.currentZ = this.currentT.bind(this)
+        this.nextZ = this.nextT.bind(this)
+        this.preZ = this.preT.bind(this)
+        this.jumpZ = this.jumpT.bind(this)
+        this.morePreZ = this.morePreT.bind(this)
+        this.moreNextZ = this.moreNextT.bind(this)
+        this.total = param.total
+        this.pageSize = param.pageSize || this.total
+
+        this.target = document.getElementById(param.id)
+        this.target.classList.add('KatyLightPagination')
+        this.box = document.createElement('div')
+        this.box.classList.add('box')
+        if (param.morePre) {
+          this.morePreBtn = document.createElement('div')
+          this.morePreBtn.classList.add('pre')
+          this.morePreBtn.classList.add('more')
+          this.morePreBtn.addEventListener('click', this.morePreZ)
+          this.box.append(this.morePreBtn)
+
+        }
+        if (param.pre) {
+          this.preBtn = document.createElement('div')
+          this.preBtn.classList.add('pre')
+          this.preBtn.addEventListener('click', this.preZ)
+          this.box.append(this.preBtn)
+
+        }
+        this.target.append(this.box)
+
+        this.ul = document.createElement('ul')
+        this.box.append(this.ul)
+
+        if (param.next) {
+          this.nextBtn = document.createElement('div')
+          this.nextBtn.classList.add('next')
+          this.nextBtn.addEventListener('click', this.nextZ)
+          this.box.append(this.nextBtn)
+        }
+        if(param.moreNext){
+          this.moreNextBtn = document.createElement('div')
+          this.moreNextBtn.classList.add('next')
+          this.moreNextBtn.classList.add('more')
+          this.moreNextBtn.addEventListener('click', this.moreNextZ)
+          this.box.append(this.moreNextBtn)
+        }
+        this.info = document.createElement('div')
+        this.info.innerText = '总共' + this.total + '页数'
+        this.info.classList.add('info')
+        this.target.append(this.info)
+        if (param.jumper) {
+          this.jump = document.createElement('div')
+          this.jump.classList.add('jump')
+
+          this.jumpInput = document.createElement('input')
+          this.jumpInput.type = 'number'
+          this.jumpInput.max = this.total
+          this.jumpInput.value = '1'
+          this.jumpInput.min = '1'
+          this.jump.append(this.jumpInput)
+          this.jumpBtn = document.createElement('button')
+          this.jumpBtn.innerText = 'GO'
+          this.jumpBtn.addEventListener('click', this.jumpZ)
+          this.jump.append(this.jumpBtn)
+          this.box.append(this.jump)
+        }
+
+        this.currentChange = param.currentChange
+        this.currentPage = param.currentPage || 1
+        let start = this.currentPage - Math.floor(this.pageSize / 2)
+        if (start < 1) {
+          start = 1
+        }
+        let end = start + this.pageSize
+        if (start + this.pageSize > this.total) {
+          end = this.total
+        }
+        for (let i = 0; i < this.pageSize; i++) {
+          let k = start + i
+          let li = document.createElement('li')
+          li.innerText = k.toString()
+          li.dataset.index = k.toString()
+          li.addEventListener('click', this.currentZ)
+          this.ul.append(li)
+          if (i > end - start) {
+            li.classList.add('hide')
+          }
+        }
+        let li = this.ul.querySelectorAll('li')
+        for (let i = 0; i < li.length; i++) {
+          if (li[i].dataset.index === this.currentPage.toString()) {
+            this.activeLi = li[i]
+            li[i].classList.add('active')
+            break
+          }
+        }
+      }
+
+
+
+      nextT(e) {
+/*        if (this.total - this.currentPage > 0) {}*/
+        this.goto(this.currentPage + 1)
+      }
+      moreNextT(e){
+/*        if (this.total - this.currentPage > this.pageSize-1) {}*/
+        this.goto(this.currentPage + this.pageSize)
+      }
+      morePreT(e){
+/*        if (this.currentPage-this.pageSize>-1) {}*/
+        this.goto(this.currentPage - this.pageSize)
+      }
+      preT(e) {
+/*        if (this.currentPage - 1 > 0) {}*/
+        this.goto(this.currentPage - 1)
+      }
+
+      jumpT(e) {
+        let index = parseInt(this.jumpInput.value)
+        if (index > 0 && index < this.total + 1) {
+          this.goto(index)
+        }
+      }
+
+      currentT(e) {
+        let index = parseInt(e.target.dataset.index)
+        this.goto(index)
+
+      }
+      update(param) {
+        if (param.total) {
+          this.total = param.total
+          this.info.innerText = '总共' + this.total + '页数'
+          if (this.currentPage > this.total) {
+            this.currentPage = this.total
+          }
+        }
+        if (param.pageSize) {
+          if (param.pageSize !== this.pageSize) {
+
+            if (param.pageSize > this.pageSize) {
+              for (let i = 0; i < param.pageSize - this.pageSize; i++) {
+                let li = document.createElement('li')
+                li.addEventListener('click', this.currentZ)
+                this.ul.append(li)
+              }
+            } else {
+              let li = this.ul.querySelectorAll('li')
+              for (let i = this.pageSize - 1; i > param.pageSize; i--) {
+                li[i].remove()
+              }
+            }
+            this.pageSize = param.pageSize
+          } else {
+
+          }
+
+        }
+        this.currentPage = param.currentPage || this.currentPage
+        this.goto(this.currentPage)
+
+      }
+      goto(index) {
+        if(index<0||index>this.total){
+          return;
+        }
+        this.currentPage = index
+        let li = this.ul.querySelectorAll('li')
+        let start = this.currentPage - Math.floor(this.pageSize / 2)
+        if (start < 1) {
+          start = 1
+        }
+        let end = start + this.pageSize
+        if (start + this.pageSize > this.total) {
+          end = this.total
+          if (end - start < this.pageSize) {
+            start = end - this.pageSize + 1
+            start = start < 0 ? 1 : start
+          }
+          /*          let a=this.total-this.pageSize+1;
+                    start=a>0?1:a;*/
+        }
+         for (let i = 0; i < this.pageSize; i++) {
+          if (i < end - start + 1) {
+            let k = start + i
+            li[i].innerText = k.toString()
+            li[i].dataset.index = k.toString()
+            li[i].classList.remove('hide')
+          } else {
+            li[i].classList.add('hide')
+          }
+
+        }
+        this.activeLi.classList.remove('active')
+        for (let i = 0; i < li.length; i++) {
+          if (li[i].dataset.index === this.currentPage.toString()) {
+            this.activeLi = li[i]
+            li[i].classList.add('active')
+            break
+          }
+        }
+        if(this.nextBtn){
+          if(this.currentPage+1>this.total){
+            this.nextBtn.classList.add("disabled");
+          }else{
+            this.nextBtn.classList.remove("disabled");
+          }
+        }
+        if(this.preBtn){
+          if(this.currentPage-1<1){
+            this.preBtn.classList.add("disabled");
+          }else{
+            this.preBtn.classList.remove("disabled");
+          }
+        }
+        if(this.morePreBtn){
+          if (this.currentPage-this.pageSize<0) {
+            this.morePreBtn.classList.add("disabled");
+          }else{
+            this.morePreBtn.classList.remove("disabled");
+
+          }
+        }
+        if(this.moreNextBtn){
+          if (this.total - this.currentPage < this.pageSize ) {
+            this.moreNextBtn.classList.add("disabled");
+          }else{
+            this.moreNextBtn.classList.remove("disabled");
+
+          }
+        }
+
+        if (this.currentChange) {
+          this.currentChange(this.currentPage)
+        }
+      }
+
+    }
+
+    window.onload = () => {
+      let d = new KatyLightPagination({
+        id: 'd',
+        total: 50,
+        pageSize: 7,
+        currentPage: 12,
+        next: true,
+        pre: true,
+        jumper: true,
+        moreNext:true,
+        morePre:true,
+        currentChange: (i) => {
+          console.log('数据更新' + i)
+        }
+
+      })
+      setTimeout(() => {
+        d.update({
+          total: 500,
+          pageSize: 17,
+          currentPage: 112,
+        })
+      }, 3000)
+    }
+  </script>
+</head>
+<body>
+<div style="padding: 20px;">
+  <div id="d"></div>
+</div>
+</body>
+</html>

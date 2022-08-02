@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    .KatyLightScrollColBox > .content::-webkit-scrollbar,
+    .KatyLightScrollColBox > .content::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+
+    body {
+      background-color: #3b3e49;
+    }
+
+    .KatyLightScrollColBox {
+      display: flex;
+      overflow: hidden;
+    }
+
+    .KatyLightScrollColBox > .content {
+      scrollbar-width: none;
+      scrollbar-height: none;
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+
+    .KatyLightScrollColBox {
+      user-select: none;
+    }
+
+
+    .KatyLightScrollColBox > .scrollBox > .scroll {
+      background-color: #00071866;
+      border-radius: 3px;
+      width: 20px;
+      height: 100%;
+      flex: 1;
+      position: relative;
+    }
+
+    .KatyLightScrollColBox > .scrollBox {
+      display: flex;
+      padding: 2px 0;
+      flex-wrap: nowrap;
+      flex-flow: column;
+
+    }
+
+    .KatyLightScrollColBox > .scrollBox > .top, .KatyLightScrollColBox > .scrollBox > .bottom {
+      background-color: #080E14;
+      border-radius: 3px;
+      width: 20px;
+      height: 40px;
+      text-align: center;
+      color: #0d4c62;
+      vertical-align: middle;
+      line-height: 40px;
+      font-size: 12px;
+      user-select: none;
+    }
+
+    .KatyLightScrollColBox > .scrollBox > .top:hover, .KatyLightScrollColBox > .scrollBox > .bottom:hover {
+      color: white;
+      background-color: #0d4c62;
+    }
+
+    .KatyLightScrollColBox > .scrollBox > .top::before {
+      content: '▲';
+    }
+
+    .KatyLightScrollColBox > .scrollBox > .bottom::before {
+      content: '▼';
+
+    }
+
+    .KatyLightScrollColBox > .scrollBox > .top {
+      margin-bottom: 2px;
+    }
+
+    .KatyLightScrollColBox > .scrollBox > .bottom {
+      margin-top: 2px;
+    }
+
+
+    .KatyLightScrollColBox > .scrollBox > .scroll > .bar {
+      background-color: #080E14;
+      position: absolute;
+      z-index: 33;
+      border-radius: 3px;
+      width: 20px;
+      height: 30px;
+      left: 0;
+      top: 0;
+    }
+
+    .list {
+      height: auto;
+      padding: 10px;
+    }
+
+    .list > .item:last-child {
+      margin-bottom: 3px;
+    }
+
+    .list > .item {
+      font-size: 16px;
+      margin-top: 3px;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      background-color: #18202D;
+      vertical-align: middle;
+      color: white;
+    }
+
+    .list > .item:hover {
+      box-shadow: inset 0 0 0 1px #00b2ff;
+    }
+
+
+    .KatyLightScrollColBox > .scrollBox > .scroll > .bar:hover {
+      background-color: #0d4c62;
+
+    }
+  </style>
+  <script>
+    class myScroll {
+      constructor(param) {
+        this.target = document.getElementById(param.id)
+        this.space = param.space || 102
+        this.target.classList.add('KatyLightScrollColBox')
+        this.content = this.target.querySelector('.content')
+        this.scrollBox = document.createElement('div')
+        this.scrollBox.classList.add('scrollBox')
+        this.target.append(this.scrollBox)
+        this.topBtn = document.createElement('div')
+        this.topBtn.classList.add('top')
+        this.scrollBox.append(this.topBtn)
+        this.scroll = document.createElement('div')
+        this.scroll.classList.add('scroll')
+        this.scrollBox.append(this.scroll)
+        this.bottomBtn = document.createElement('div')
+        this.bottomBtn.classList.add('bottom')
+        this.scrollBox.append(this.bottomBtn)
+        this.bar = document.createElement('div')
+        this.bar.classList.add('bar')
+        this.scroll.append(this.bar)
+
+        this.maxHeight = this.content.firstElementChild.clientHeight
+        this.viewHeight = this.content.clientHeight
+        this.scrollHeight = this.scroll.clientHeight
+        this.barHeight = Math.floor(this.viewHeight / this.maxHeight * this.viewHeight)
+        this.slideHeight = this.scrollHeight - this.barHeight
+        this.bar.style.height = this.barHeight + 'px'
+        this.endTop = this.scrollHeight - this.barHeight
+        this.mouseTop = 0
+        this.moveHeight = this.maxHeight - this.viewHeight
+
+        this.beginMoveZ = this.beginMove.bind(this)
+        this.moveZ = this.move.bind(this)
+        this.moveToZ = this.moveTo.bind(this)
+        this.endMoveZ = this.endMove.bind(this)
+        this.topZ = this.top.bind(this)
+        this.bottomZ = this.bottom.bind(this)
+        this.onScrollZ = this.onScroll.bind(this)
+        this.content.addEventListener('scroll', this.onScrollZ)
+        this.bar.addEventListener('mousedown', this.beginMoveZ)
+        this.scroll.addEventListener('click', this.moveToZ)
+        this.topBtn.addEventListener('click', this.topZ)
+        this.bottomBtn.addEventListener('click', this.bottomZ)
+        this.topNum = 0
+      }
+
+      onScroll(e) {
+        this.topNum = this.content.scrollTop / this.moveHeight * this.endTop
+        this.bar.style.top = this.topNum + 'px'
+      }
+
+      update() {
+        this.maxHeight = this.content.firstElementChild.clientHeight
+        this.viewHeight = this.content.clientHeight
+        this.scrollHeight = this.scroll.clientHeight
+        this.barHeight = Math.floor(this.viewHeight / this.maxHeight * this.viewHeight)
+        this.slideHeight = this.scrollHeight - this.barHeight
+        this.bar.style.height = this.barHeight + 'px'
+        this.endTop = this.scrollHeight - this.barHeight
+        this.mouseTop = 0
+        this.moveHeight = this.maxHeight - this.viewHeight
+        let top = this.topNum
+        this.content.scrollTop = top / this.endTop * this.moveHeight
+        this.bar.style.top = top + 'px'
+      }
+
+      beginMove(e) {
+        document.addEventListener('mousemove', this.moveZ)
+        document.addEventListener('mouseup', this.endMoveZ)
+        let rect = this.bar.getBoundingClientRect()
+        this.mouseTop = e.y - rect.top
+      }
+
+      move(e) {
+        let rect = this.scroll.getBoundingClientRect()
+        let top = e.y - rect.top
+        if (top < 0) {
+          top = 0
+        } else if (rect.bottom - e.y < 0) {
+          top = this.endTop
+        } else {
+          top = top - this.mouseTop
+          if (top < 0) {
+            top = 0
+          } else if (top > this.endTop) {
+            top = this.endTop
+          }
+        }
+        this.topNum = top
+        this.content.scrollTop = top / this.endTop * this.moveHeight
+
+        this.bar.style.top = top + 'px'
+
+      }
+
+      moveTo(e) {
+        if (e.target !== this.bar) {
+          let top = Math.floor(e.offsetY - this.barHeight / 2)
+          if (top < 0) {
+            top = 0
+          } else if (top > this.endTop) {
+            top = this.endTop
+          }
+          this.topNum = top
+          this.content.scrollTop = top / this.endTop * this.moveHeight
+          this.bar.style.top = top + 'px'
+
+        }
+      }
+
+      bottom(e) {
+        let top = this.topNum + this.space / this.moveHeight * this.endTop
+        if (top < 0) {
+          top = 0
+        } else if (top > this.endTop) {
+          top = this.endTop
+        }
+        this.content.scrollTop = top / this.endTop * this.moveHeight
+        this.bar.style.top = top + 'px'
+        this.topNum = top
+
+      }
+
+      top(e) {
+        let top = this.topNum - this.space / this.moveHeight * this.endTop
+        if (top < 0) {
+          top = 0
+        } else if (top > this.endTop) {
+          top = this.endTop
+        }
+        this.content.scrollTop = top / this.endTop * this.moveHeight
+        this.bar.style.top = top + 'px'
+        this.topNum = top
+      }
+
+      endMove(e) {
+        document.removeEventListener('mousemove', this.moveZ)
+        document.removeEventListener('mouseup', this.endMoveZ)
+      }
+    }
+
+    var my
+    window.onload = () => {
+      my = new myScroll({ id: 'ab', space: 100 })
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          let div = document.createElement('div')
+          div.classList.add('item')
+          div.innerText = i.toString()
+          my.content.firstElementChild.append(div)
+
+        }
+        my.update()
+      }, 1500)
+    }
+  </script>
+</head>
+<body>
+<div style="height: 400px;width: 100%;margin-top: 50px" id="ab">
+  <div class="content">
+    <div class="list">
+      <div class="item">苹果</div>
+      <div class="item">葡萄</div>
+      <div class="item">梨子</div>
+      <div class="item">西瓜</div>
+      <div class="item">苹果</div>
+      <div class="item">葡萄</div>
+      <div class="item">梨子</div>
+      <div class="item">西瓜</div>
+      <div class="item">苹果</div>
+      <div class="item">葡萄</div>
+      <div class="item">梨子</div>
+      <div class="item">西瓜</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

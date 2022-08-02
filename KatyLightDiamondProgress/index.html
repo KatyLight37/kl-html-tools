@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+ <script src="./KatyLightDiamondProgress.js"></script>
+  <link type="text/css" href="./KatyLightDiamondProgress.css" rel="stylesheet" />
+  <style>
+    body{
+      padding: 0;
+      margin: 0;
+      background-color: black;
+    }
+  </style>
+  <script>
+
+
+    window.onload = () => {
+      var kl = KatyLightDiamondsProgressCreate({total: 40, value: 8, master: document.getElementById('master')});
+
+      console.log(kl)
+      setTimeout(() => {
+        kl.setValue(1);
+      }, 100)
+
+    }
+
+
+  </script>
+</head>
+<body>
+
+<div id="master"  ></div>
+
+</body>
+</html>

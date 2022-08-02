@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link type="text/css" href="./KatyLightMessage.css" rel="stylesheet"/>
+<script src="./KatyLightMessage.js"></script>
+  <script>
+
+    let box;
+
+    window.onload = () => {
+      box = document.getElementById('box');
+      console.log(box)
+      let msg=new KatyLightMessage({box:box});
+      setInterval(() => {
+        msg.warn('提示');
+      }, 1000);
+    }
+  </script>
+  <style>
+    body {
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+<div  id="box">
+
+</div>
+</body>
+</html>

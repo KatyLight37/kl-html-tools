@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="./KatyLightNavbar.js"></script>
+  <link type="text/css" href="./KatyLightNavbar.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      background-color: black;
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+  <script>
+    let navBarList=[
+      {
+        label:'首页',
+        key:'index'
+      },
+      {
+        label:'背包',
+        key:'pag'
+      },
+      {
+        label:'地图',
+        key:'map'
+      },
+      {
+        label:'KatyLightTheme',
+        key:'map'
+      },
+      {
+
+        label:'A',
+        key:'a'
+      },
+      {
+        label:'QQ',
+        key:'qq'
+      },
+      {
+        label:'how is going',
+        key:'how'
+      },
+      {
+        label:'search',
+        key:'search'
+      },
+      {
+        label:'search',
+        key:'search'
+      },
+      {
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },
+      {
+        label:'search',
+        key:'search'
+      },
+      {
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },{
+        label:'search',
+        key:'search'
+      },
+
+
+
+
+
+
+
+    ]
+
+
+    window.onload = () => {
+      let Nav=new KatyLightNavbar({
+        target: document.querySelector('nav'),
+        dataList:navBarList,
+        choose:(data)=>{
+          console.log(data)
+        }
+      })
+      setTimeout(()=>{
+        Nav.choose(3);
+      },1500)
+     }
+
+
+  </script>
+</head>
+<body>
+<div style="padding-left: 100px">
+  <nav class="nav">
+
+  </nav>
+</div>
+
+</body>
+</html>
+

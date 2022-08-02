@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+    class Ball {
+      constructor(props) {
+        this.role = props.role
+         this .x = props.x||0
+
+        this .y = props.y||0
+        //存放自定义变量的地方
+        this.data=props.data||{}
+        this.scale=props.scale||{x:1,y:1};
+
+      /*  this.moveZ=props.move;
+        if(this.moveZ){
+          this.move= this.moveZ.bind(this);
+        }else{
+          this.move=null;
+        }*/
+        this.move=props.move;
+        this.rotate=props.rotate||0;
+        this.fillStyle=props.fillStyle||'#00000055';
+        this.strokeStyle=props.strokeStyle||'#000000';
+        this.stroke=props.stroke===undefined?false:props.stroke;
+        this.fill=props.fill===undefined?true:props.fill;
+
+        switch (this.role) {
+          case 'img':
+            console.log('我是图片对象')
+            break
+          case 'rect':
+            this.w = props.w || 10
+            this.h = props.h || 10
+
+            console.log('我是方形对象')
+            break
+          case 'cir':
+            this.r = props.r || 10
+
+            console.log('我是圆形对象')
+            break
+        }
+
+        //  p点都是按照中心计算，不要问我了，这个更具类别调整，cir不用。
+
+      }
+      go(){
+        if(this.move){
+          this.move()
+         }
+      }
+      setPosition(props) {
+        this .x = props.x
+        this .y = props.y
+      }
+      toDegGo(deg,path){
+      //  朝某个方向走动多少
+      }
+      checkOutSide(){
+
+      }
+    }
+
+    class Table {
+      constructor(props) {
+        this.ballList = []
+        this.canvas = props.canvas
+         this.ctx = this.canvas.getContext('2d')
+        this.viewInterval = setInterval(() => {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+          this.ballList.forEach(item => {
+            let x = 0, y = 0
+            let w=0,h=0,r=0
+            this.ctx.fillStyle=item.fillStyle;
+            this.ctx.strokeStyle=item.strokeStyle;
+            this.ctx.beginPath()
+            this.  ctx.save();
+            switch (item.role) {
+              case 'img':
+                break
+              case 'rect':
+                x=item.x-item.w/2;
+                y=item.y-item.h/2;
+                 if(item.rotate){
+                   this.ctx.translate( item.x,  item.y);
+                   // this.ctx.scale(2,2); 这里是万能的
+
+                   this.ctx.rotate(item.rotate*Math.PI/180);
+                   this.ctx.translate(  -item.x,  -item.y);
+                 }
+                if(item.scale.x!==1||item.scale.y!==1){
+                  this.ctx.translate( item.x,  item.y);
+                  this.ctx.scale(item.scale.x,item.scale.y);
+
+                   this.ctx.translate(  -item.x,  -item.y);
+                }
+                this.ctx.rect(x,y,item.w,item.h);
+                break
+              case 'cir':
+                x=item.x;
+                y=item.y;
+
+                this.ctx.arc(x,y,item.r,0,Math.PI*2);
+                break
+            }
+
+            if(item.stroke){
+              this.ctx.stroke();
+            }
+            if(item.fill){
+              this. ctx.fill();
+            }
+            this.ctx.restore();
+            item.go();
+          })
+        }, 10)
+
+      }
+      setTable(table){
+        this.table=table;
+      }
+      addBall(ball) {
+        this.ballList.push(ball)
+      }
+      addBallList(arr) {
+        arr.forEach(item=>{
+          this.ballList.push(item)
+        })
+      }
+      removeBall(ball) {
+        for (let i = 0; i < this.ballList.length; i++) {
+          if (this.ballList[i] === ball) {
+            this.ballList.splice(i, 1)
+          }
+        }
+      }
+    }
+
+    window.onload = () => {
+      let myTable = new Table({ canvas: document.querySelector('canvas') })
+      let myBall = new Ball({ role: 'cir',fill:false,stroke:true, r: 10,x:90,y:100,rotate:0 ,move:function() {
+
+      }})
+      let myBall2 = new Ball({ role: 'cir', r: 10,x:400,y:400,move:function(){
+
+        } })
+      let myBall3 = new Ball({ role: 'rect',rotate:3, w: 50, h: 20,x:400,y:400
+        ,scale:{
+        x:1.1,y:1
+        }
+        ,fillStyle:'#00FFFF99',
+        data:{
+          g:true
+        },move:function(){
+          this.rotate+=5
+          if(this.data.g){
+            this.x--;
+
+
+          }else{
+            this.x++;
+
+          }
+          if(this.x>500){
+            this.scale.x+=0.5
+            this.data.g=true;
+          }else if(this.x<50){
+            this.data.g=false;
+            this.scale.x-=0.5
+
+          }
+         } })
+      let myBall5= new Ball({ role: 'rect',rotate:3,
+        fillStyle:'#FF000099',
+        data:{
+        g:true
+        },
+        w: 100,x:400,y:400,move:function(){
+          this.rotate-=5
+          if(this.data.g){
+            this.x--;
+          }else{
+            this.x++;
+          }
+          if(this.x>500){
+            this.data.g=true;
+          }else if(this.x<50){
+            this.data.g=false;
+          }
+        } })
+      let myBall4 = new Ball({ role: 'rect' , w: 800,x:0,y:400  })
+      myTable.addBall(myBall)
+      myTable.addBall(myBall2)
+      myTable.addBall(myBall3)
+      myTable.addBall(myBall4)
+      myTable.addBall(myBall5)
+      console.log(myTable)
+    }
+  </script>
+</head>
+<body>
+<canvas width="900" height="900"></canvas>
+</body>
+</html>

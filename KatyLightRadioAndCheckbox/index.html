@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body {
+      background-color: black;
+      padding: 0;
+      margin: 0;
+      color: white;
+    }
+
+    .KatyLightRadio {
+
+    }
+
+    .KatyLightRadio::after {
+      clear: both;
+      display: block;
+      content: '';
+    }
+
+    .KatyLightRadio > .item {
+      float: left;
+      width: 50px;
+      text-align: center;
+      line-height: 40px;
+      vertical-align: middle;
+      font-size: 32px;
+      color: dimgray;
+      transition: all .3s ease-in;
+      font-weight: bolder;
+      user-select: none;
+    }
+
+  </style>
+  <script>
+    var data = [
+      {
+        label: '♀',
+        title: '金星',
+        value: 'venus',
+        color: '#ffdd00'
+
+      },
+      {
+        label: '♂',
+        title: '火星',
+        value: 'mars',
+        color: '#FF0000'
+      },
+      {
+        label: '☿',
+        title: '水星',
+        value: 'mercury',
+        color: '#61ebff'
+      },
+      {
+        label: '♁',
+        title: '地球',
+        value: 'earth',
+        color: '#003eff'
+      },
+
+      {
+        label: '☉',
+        title: '太阳',
+        value: 'sun',
+        color: '#ff4f00'
+      },
+      {
+        label: '♆',
+        title: '海王星',
+        value: 'sun',
+        color: '#0015ff'
+      },
+      {
+        label: '♅',
+        title: '天王星',
+        value: 'sun',
+        color: '#00f7ff'
+      },
+
+      {
+        label: '♇',
+        title: '冥王星',
+        value: 'gold',
+        color: '#5e00ff'
+      }
+    ]
+
+    class KatyLightRadio {
+      constructor(param) {
+        this.bar = document.getElementById(param.id)
+        this.data = param.data
+        this.index = -1
+        this.bar.classList.add('KatyLightRadio')
+        this.chooseZ = this.choose.bind(this)
+        this.nodeList = []
+        if(param.choose){
+          this.chooseEnd=param.choose;
+        }
+
+        for (let i = 0; i < this.data.length; i++) {
+          let div = document.createElement('div')
+          div.classList.add('item')
+          div.addEventListener('click', this.chooseZ)
+          div.title = this.data[i].title
+          div.innerText = this.data[i].label
+          div.dataset.index = i.toString()
+          this.bar.append(div)
+          this.nodeList.push(div)
+        }
+
+      }
+
+      choose(e) {
+        if (this.index !== -1) {
+          this.nodeList[this.index].removeAttribute('style')
+        }
+        let index = parseInt(e.target.dataset.index)
+        if (this.index !== index) {
+          let color = this.data[index].color
+          e.target.style.color = color
+          e.target.style.textShadow = '0 0 8px ' + color
+          this.index = index
+        } else {
+          this.index = -1
+        }
+        if(this.chooseEnd){
+          this.chooseEnd({...this.data[index],index:this.index});
+        }
+
+      }
+
+    }
+    function chooseE(data){
+      console.log(this)
+      console.log(data)
+    }
+    class KatyLightCheckBox {
+      constructor(param) {
+        this.bar = document.getElementById(param.id)
+        this.data = param.data
+        this.selectIndex = new Map();
+        this.bar.classList.add('KatyLightRadio')
+        this.chooseZ = this.choose.bind(this)
+        this.nodeList = []
+        if(param.choose){
+          this.chooseEnd=param.choose;
+        }
+
+        for (let i = 0; i < this.data.length; i++) {
+          let div = document.createElement('div')
+          div.classList.add('item')
+          div.addEventListener('click', this.chooseZ)
+          div.title = this.data[i].title
+          div.innerText = this.data[i].label
+          div.dataset.index = i.toString()
+          this.bar.append(div)
+          this.nodeList.push(div)
+        }
+
+      }
+
+      choose(e) {
+        let index = parseInt(e.target.dataset.index)
+        if (this.selectIndex.has(index)) {
+          this.nodeList[index].removeAttribute('style');
+          this.selectIndex.delete(index);
+        }else{
+          let color = this.data[index].color;
+          e.target.style.color = color;
+          e.target.style.textShadow = '0 0 8px ' + color;
+          this.selectIndex.set(index,true);
+        }
+        if(this.chooseEnd){
+          this.chooseEnd(this.selectIndex);
+        }
+
+
+
+      }
+
+    }
+    window.onload = () => {
+      let katy = new KatyLightRadio({
+        data: data,
+        id: 'bar',
+        choose:chooseE
+      })
+      let katy2 = new KatyLightCheckBox({
+        data: data,
+        id: 'bar2',
+        choose:chooseE
+      })
+    }
+  </script>
+</head>
+<body>
+<div>单选框</div>
+<div id="bar">
+  <!--  ♀☿♂♃♆♅☪❁♁♇♄⚤⚥⚨⚧⚢⚣⚦⚩⚯⚮⚭☼☾⚙⛢☉☩-->
+</div>
+<div>多选框</div>
+<div id="bar2"></div>
+</body>
+</html>

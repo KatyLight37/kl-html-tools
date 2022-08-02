@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body{
+      background-color: black;
+      color: white;
+    }
+    .KatyLight-select {
+      position: relative;
+      width: 200px;
+      display: inline-block;
+      text-align: center;
+      user-select: none;
+      color: #3b5b65;
+      font-size: .8rem;
+    }
+
+    .KatyLight-select > .title {
+      padding: .5rem 1rem;
+      background-color: transparent;
+      display: block;
+      box-shadow: inset 0 0 0 2px #96e4ff;
+      color: #96e4ff;
+    }
+    .KatyLight-select > .title:empty::after{
+      content: '请选择';
+      color: #3b5b65;
+
+    }
+    .KatyLight-select > .KatyLight-select-list {
+      display: none;
+    }
+
+    .KatyLight-select.active > .KatyLight-select-list {
+      display: block;
+    }
+
+    .KatyLight-select-list > ul {
+      list-style: none;
+      margin: 0;
+      position: absolute;
+      top:.5rem;
+      padding-inline-start: 0;
+       left: 0;
+      width: 100%;
+      box-shadow: inset 0 0 0 2px #96e4ff;
+    }
+
+    .KatyLight-select-list > ul > li {
+      padding:.5rem 0;
+    }
+
+    .KatyLight-select-list {
+      position: relative;
+    }
+
+    .KatyLight-select-list > ul > li:hover{
+      color: #96e4ff;
+    }
+
+    .KatyLight-select-list > ul > li.active {
+      color: #96e4ff;
+      background-color: #96e4ff22;
+    }
+    .KatyLight-select > .del {
+      position: absolute;
+      right: 1rem;
+      top: .5rem;
+      z-index: 22;
+      height: 2rem;
+      width: 2rem;
+
+    }
+
+    .KatyLight-select > .del.active {
+      display: block;
+    }
+
+    .KatyLight-select > .del {
+      display: none;
+      color: white;
+    }
+
+    .KatyLight-select > .del::after {
+      content: 'x';
+    }
+  </style>
+
+</head>
+<script>
+  class KatyLightSelect {
+    constructor(params) {
+      this.target = params.target
+      this.data = params.data
+      this.title = this.target.querySelector('.title')
+      this.del = this.target.querySelector('.del')
+      this.ul = this.target.querySelector('ul')
+      this.active = false
+      this.cIndex = -1
+      this.outClickZ = this.outClick.bind(this)
+      document.addEventListener('click', this.outClickZ)
+      this.del.dataset.del = '1'
+      this.title.dataset.title = '1'
+      this.domCreate()
+    }
+    domCreate() {
+      this.li = []
+      for (let i = 0; i < this.data.length; i++) {
+        let li = document.createElement('li')
+        li.dataset.index = i.toString()
+        li.dataset.option = 'K'
+        li.innerText = this.data[i].label
+        this.ul.append(li)
+        this.li.push(li)
+      }
+    }
+    titleTrigger() {
+      this.view(!this.active)
+    }
+    view(t) {
+      this.active = t
+      if (t) {
+        this.target.classList.add('active')
+      } else {
+        this.target.classList.remove('active')
+      }
+    }
+    getVal() {
+      if (this.cIndex === -1) {
+        return ''
+      } else {
+        return this.data[this.cIndex].value
+      }
+    }
+    delTrigger() {
+      this.choose(-1)
+    }
+    outClick(e) {
+      if (!this.target.contains(e.target)) {
+        this.view(false)
+      } else {
+        if (e.target.dataset.option) {
+          this.choose(parseInt(e.target.dataset.index))
+          this.view(false)
+        } else if (e.target.dataset.title) {
+          this.titleTrigger()
+        } else if (e.target.dataset.del) {
+          this.delTrigger()
+        }
+      }
+    }
+    choose(ii) {
+      if (this.cIndex !== -1) {
+        this.li[this.cIndex].classList.remove('active')
+      }
+      this.cIndex = ii
+      if (this.cIndex !== -1) {
+        this.li[this.cIndex].classList.add('active')
+        this.title.innerText = this.data[this.cIndex].label
+        this.del.classList.add('active')
+      } else {
+        this.title.innerText = ''
+        this.del.classList.remove('active')
+      }
+    }
+  }
+
+  window.onload = () => {
+    let zz = new KatyLightSelect({
+      target: document.querySelector('.KatyLight-select'),
+      data: [
+        { label: 'a1', value: 'b1' },
+        { label: 'a2', value: 'b2' },
+        { label: 'a3', value: 'b3' },
+        { label: 'a4', value: 'b4 ' },
+        { label: 'a5', value: 'b5' },
+        { label: 'a6', value: 'b6' }
+      ]
+    })
+    setTimeout(() => {
+      console.log(zz.getVal())
+    }, 1500)
+  }
+</script>
+<body>
+<div class="KatyLight-select">
+  <span class="title"></span>
+  <span class="del"></span>
+  <div class="KatyLight-select-list">
+    <ul>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

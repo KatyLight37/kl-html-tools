@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>自动版</title>
+  <style>
+    body {
+      background-color: dodgerblue;
+    }
+
+    .btn::before {
+      content: '';
+      display: block;
+      position: absolute;
+      height: 50px;
+      width: 200%;
+      top: 0;
+      transform: rotate(45deg);
+      pointer-events: none;
+      background-color: #ffffff99;
+      animation: my ease-in infinite 2s;
+    }
+
+    @keyframes my {
+      0% {
+        left: 60px;
+      }
+      80% {
+        left: 60px;
+      }
+      100% {
+        left: calc(-100% - 60px);
+      }
+
+    }
+ 
+    .btn {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      padding: 10px 20px;
+      color: white;
+      user-select: none;
+      background-color: deeppink;
+    }
+  </style>
+</head>
+<body>
+<div class="btn">fdsfd</div>
+<div class="btn">开始菜单</div>
+<div class="btn">开始菜单开始菜单开始菜单开始菜单</div>
+</body>
+</html>
